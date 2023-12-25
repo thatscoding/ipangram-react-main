@@ -3,7 +3,7 @@ function Pagination({ page, setPage, total, limit }: any) {
   return (
     <div className="flex gap-4 justify-center">
       {totalPages > 0
-        ? [...Array(totalPages)].map((val, index) => (
+        ? [...Array(totalPages)].map((index) => (
             <div
               key={index}
               onClick={() => setPage(index + 1)}

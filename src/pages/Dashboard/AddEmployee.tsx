@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { HashLoader } from "react-spinners";
@@ -103,7 +103,10 @@ export default function Register() {
     // let { confirmPassword, ...newData } = data;
     // console.log(newData);
 
-    const newData: any = { ...data, department: Depart?._id };
+    const { confirmPassword, ...newData } = {
+      ...data,
+      department: Depart?._id,
+    };
     console.log(newData);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -365,16 +368,6 @@ export default function Register() {
           >
             Submit
           </button>
-
-          <p className="mt-10 text-center text-sm text-gray-500">
-            Have a account?{" "}
-            <Link
-              to="/login"
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-            >
-              Login
-            </Link>
-          </p>
         </div>
       </div>
     </>

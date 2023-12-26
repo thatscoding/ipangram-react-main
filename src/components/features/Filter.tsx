@@ -7,8 +7,8 @@ function Filter({ allLocation, location, setlocation }: any) {
           <div
             className={
               location.includes(val)
-                ? " bg-green-500 text-white  px-2 py-1 border-green-500 rounded "
-                : " border px-2 py-1  border-green-500 rounded text-white"
+                ? " bg-green-500 text-white  px-2 py-1 border-green-500 rounded capitalize cursor-pointer"
+                : " border px-2 py-1  border-gray-500 rounded text-white capitalize cursor-pointer"
             }
             key={index}
             onClick={() =>

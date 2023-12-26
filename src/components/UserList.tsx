@@ -83,7 +83,7 @@ function UserList() {
               className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
             ></div>
           </div>
-          <div className="flex justify-between w-full gap-4">
+          <div className="flex justify-between w-full gap-4 px-4  items-center">
             <Sort sort={sort} setSort={setSort} />
 
             <div className="">
@@ -119,7 +119,7 @@ function UserList() {
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 mx-4">
             <Filter
               allLocation={data.locations ? data.locations : []}
               setlocation={setlocation}

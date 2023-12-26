@@ -4,18 +4,22 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserInfo } from "../context/userContext";
 import { LogoutUser } from "../services/user.api";
+import { HashLoader } from "react-spinners";
 
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { userInfo, clearUserInfo } = useUserInfo();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
     try {
+      setLoading(true);
       console.log(userInfo);
       const res = await LogoutUser(userInfo?.token);
       console.log(res);
       if (res?.data.success) {
+        setLoading(false);
         await clearUserInfo();
         navigate("/login");
       }
@@ -25,6 +29,13 @@ function Navbar() {
   };
 
   let curUser = { ...userInfo };
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        <HashLoader color="#36d7b7" />
+      </div>
+    );
+  }
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
@@ -107,7 +118,7 @@ function Navbar() {
           {userInfo ? (
             <p
               onClick={() => handleLogout()}
-              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="cursor-pointer rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Logout
             </p>
@@ -213,7 +224,7 @@ function Navbar() {
                 {userInfo ? (
                   <p
                     onClick={() => handleLogout()}
-                    className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="cursor-pointer rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
                     Logout
                   </p>

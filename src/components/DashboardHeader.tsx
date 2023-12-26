@@ -6,7 +6,6 @@ import { LogoutUser } from "../services/user.api";
 import { useUserInfo } from "../context/userContext";
 
 const navigation = [
-  { name: "Home", to: "/", current: false },
   { name: "Employees", to: "/dashbard/employees", current: false },
   { name: "Departments", to: "/dashbard/departments", current: false },
 ];
@@ -60,7 +59,7 @@ export default function DHeader({
         <body class="h-full">
         ```
       */}
-      <div className="min-h-full">
+      <div className="min-h-full ">
         <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
             <>

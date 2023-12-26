@@ -5,7 +5,7 @@ import { HashLoader } from "react-spinners";
 import { RegisterUser, UserProfile } from "../../services/user.api";
 import { useUserInfo } from "../../context/userContext";
 import DHeader from "../../components/DashboardHeader";
-import { getAllDepartments } from "../../services/department.api";
+import { deptById, getAllDepartments } from "../../services/department.api";
 import { UpdateEmployee, employeeById } from "../../services/employee.api";
 
 type Inputs = {
@@ -49,7 +49,9 @@ export default function Register() {
       }
     };
     fetchCategory();
+  }, [userInfo]);
 
+  useEffect(() => {
     if (id) {
       const fetchEmployee = async () => {
         setLoading(true);
@@ -62,37 +64,38 @@ export default function Register() {
           setValue("mobileNumber", res?.data.user.mobileNumber);
           setValue("location", res?.data.user.location);
 
-          const dept: any = deptCategory.find((d: any) => {
-            if (d._id === res?.data.user.department) {
-              return d;
-            }
-          });
-          // console.log(dept);
-          setValue("department", dept?.name);
+          const dept: any = await deptById(
+            res?.data.user.department,
+            userInfo?.token
+          );
+          console.log(dept);
+          setValue("department", dept?.data.doc.name);
+
+          setLoading(false);
         }
       };
       fetchEmployee();
     }
-  }, [userInfo]);
+  }, []);
 
   console.log(deptCategory);
 
   const submitHandler = handleSubmit(async (data) => {
-    setValue("department", "6587ee027c8dc1775d35e442");
     console.log(data);
 
     setError("");
-    // if (
-    //   !data.name ||
-    //   !data.age ||
-    //   !data.mobileNumber ||
-    //   !data.location ||
-    //   !data.department ||
-    //   (!data.email && !data.password && !data.confirmPassword)
-    // ) {
-    //   setLoading(false);
-    //   return setError("All fields are required.");
-    // }
+
+    if (
+      (!id && !data.name) ||
+      !data.age ||
+      !data.mobileNumber ||
+      !data.location ||
+      !data.department ||
+      (!data.email && !data.password && !data.confirmPassword)
+    ) {
+      setLoading(false);
+      return setError("All fields are required.");
+    }
 
     const Depart: any = deptCategory.find((d: any) => {
       if (d.name === data.department) {
@@ -138,7 +141,14 @@ export default function Register() {
           setLoading(false);
         }
       } else {
+        console.log("register working");
+
         let res = await RegisterUser(newData);
+        if (res.success === false) {
+          setLoading(false);
+          alert(res.error);
+          return;
+        }
         console.log(res);
         if (res?.data.success) {
           setLoading(false);

@@ -12,18 +12,17 @@ type Inputs = {
   location: string;
   password: string;
   confirmPassword: string;
-  department: string;
 };
 export default function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { register, handleSubmit, setValue } = useForm<Inputs>();
+  const { register, handleSubmit } = useForm<Inputs>();
 
   const submitHandler = handleSubmit(async (data) => {
-    setValue("department", "658901766fc199077ac34655");
     console.log(data);
+    setLoading(true);
 
     setError("");
     if (
@@ -41,31 +40,32 @@ export default function Register() {
     const isValidEmail = emailRegex.test(data.email);
     if (!isValidEmail) {
       setLoading(false);
-
       return setError("Email is not correct.");
     }
 
     if (data.password !== data.confirmPassword) {
       setLoading(false);
-
       return setError("Password doen't matched.");
     }
 
     let { confirmPassword, ...newData } = data;
     console.log(newData);
-    setLoading(true);
 
     try {
       setError("");
       const res = await RegisterUser(newData);
+      if (res.success === false) {
+        setLoading(false);
+        setError(res.error);
+        return;
+      }
       console.log(res);
-      setLoading(false);
       if (res?.data.success) {
+        setLoading(false);
         navigate("/login");
-      } else {
-        setError("error whiling register");
       }
     } catch (error: any) {
+      setLoading(false);
       console.log(error?.message);
       setError(error?.message);
 
@@ -86,11 +86,6 @@ export default function Register() {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-lg">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign Up to your account
           </h2>

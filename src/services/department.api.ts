@@ -23,8 +23,8 @@ export const getAllDepartments = async (token: string) => {
                 'Content-Type': 'application/json',
             },
         });
-    } catch (error) {
-        console.log(error);
+    } catch (error: any) {
+        return error?.response.data
     }
 };
 
@@ -50,8 +50,8 @@ export const deleteDept = async (id: string, token: string) => {
                 'Content-Type': 'application/json',
             },
         });
-    } catch (error) {
-        console.log(error);
+    } catch (error: any) {
+        return error?.response.data
     }
 };
 

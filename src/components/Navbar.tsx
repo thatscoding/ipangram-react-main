@@ -19,11 +19,12 @@ function Navbar() {
       const res = await LogoutUser(userInfo?.token);
       console.log(res);
       if (res?.data.success) {
-        setLoading(false);
         await clearUserInfo();
+        setLoading(false);
         navigate("/login");
       }
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };
@@ -109,7 +110,7 @@ function Navbar() {
           </Link>
 
           {curUser && userInfo && (
-            <p className="text-sm font-semibold leading-6 text-gray-900">
+            <p className="text-sm font-semibold leading-6  capitalize text-green-600">
               {curUser.name}
             </p>
           )}
@@ -215,7 +216,7 @@ function Navbar() {
                 </Link>
 
                 {curUser && userInfo && (
-                  <p className="py-2  text-base font-semibold leading-6 text-gray-900">
+                  <p className="py-2  text-base font-semibold leading-6 capitalize text-green-600">
                     {curUser?.name}
                   </p>
                 )}
@@ -224,7 +225,7 @@ function Navbar() {
                 {userInfo ? (
                   <p
                     onClick={() => handleLogout()}
-                    className="cursor-pointer rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="w-40 text-center cursor-pointer rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
                     Logout
                   </p>

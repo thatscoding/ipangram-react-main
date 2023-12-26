@@ -38,8 +38,8 @@ export const deleteEmployee = async (id: string, token: string) => {
                 'Content-Type': 'application/json',
             },
         });
-    } catch (error) {
-        console.log(error);
+    } catch (error: any) {
+        return error?.response.data
     }
 };
 
@@ -51,8 +51,8 @@ export const UpdateEmployee = async (data: any, id: string, token: string) => {
                 'Content-Type': 'application/json',
             },
         });
-    } catch (error) {
-        console.log(error);
+    } catch (error: any) {
+        return error?.response.data
     }
 };
 

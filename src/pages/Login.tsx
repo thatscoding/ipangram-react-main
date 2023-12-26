@@ -21,6 +21,7 @@ export default function Login() {
 
   const submitHandler = handleSubmit(async (data) => {
     console.log(data);
+    setLoading(true);
 
     setError("");
     if (!data.email && !data.password) {
@@ -28,25 +29,26 @@ export default function Login() {
       return setError("All fields are required.");
     }
 
-    setLoading(true);
-
     try {
       setError("");
-      const res: any = await LoginUser(data);
-      await console.log(res);
+      const res = await LoginUser(data);
+      console.log(res);
+
+      if (res.success === false) {
+        setLoading(false);
+        return setError(res.error);
+      }
+      console.log(res);
       if (res?.data.success) {
         const newData = { ...res?.data.data, token: res?.data.token };
         console.log(newData);
         localStorage.setItem("user", JSON.stringify(newData));
         setUserInfo(newData);
+        setLoading(false);
 
         navigate("/");
-      } else {
-        setError(
-          "Error whiling login possibly you email and password not registered. "
-        );
+        setLoading(false);
       }
-      setLoading(false);
     } catch (error: any) {
       console.log(error?.message);
       setError(error?.message);
@@ -67,11 +69,6 @@ export default function Login() {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign in to your account
           </h2>

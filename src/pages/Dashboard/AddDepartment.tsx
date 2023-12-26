@@ -69,13 +69,18 @@ function AddDepartment() {
     try {
       if (id) {
         const res = await updateDept(data, id, userInfo?.token);
+
         console.log("Add department response:", res);
         if (res?.data.success) {
           setLoading(false);
           navigate("/dashbard/departments");
+          return;
         }
+
+        alert("Name is already Exist.");
       } else {
         const res = await addDepartment(data, userInfo?.token);
+
         console.log("Add department response:", res);
         if (res?.data.success) {
           setLoading(false);
@@ -113,6 +118,12 @@ function AddDepartment() {
               Add New Department
             </h2>
           </div>
+
+          {error && (
+            <h1 className="bg-red-200 text-red-500 font-semibold text-lg text-center py-2 px-4">
+              {error}
+            </h1>
+          )}
 
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <div className="space-y-6">

@@ -46,21 +46,19 @@ function UserList() {
   const handleDeleteEmployee = async (id: string) => {
     setLoading(true);
     const res = await deleteEmployee(id, userInfo?.token);
-    console.log(res);
-    if (res?.data.success) {
-      const url = `?page=${page}&sort=${sort.sort},${
-        sort.order
-      }&location=${location.toString()}&search=${search}`;
-      console.log(url);
-
-      const res = await getAllEmployees(url, userInfo?.token);
-      console.log(res);
-
+    if (res.success === false) {
+      alert(res.error);
       setLoading(false);
+      return;
+    }
+    if (res?.data.success) {
+      const res = await getAllEmployees("", userInfo?.token);
+      console.log(res);
       if (res?.data.success) {
         console.log(res);
         setData(res?.data.response);
         setEmployees(res?.data.response.user);
+        setLoading(false);
       }
     }
   };
@@ -168,7 +166,7 @@ function UserList() {
                         alt="Jese image"
                       /> */}
                       <div className="ps-3">
-                        <div className="text-base font-semibold">
+                        <div className="text-base font-semibold capitalize">
                           {employee.name}
                         </div>
                         <div className="font-normal text-gray-500">
@@ -178,8 +176,8 @@ function UserList() {
                     </th>
                     <td className="px-6 py-4">{employee.department}</td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>{" "}
+                      <div className="flex items-center capitalize">
+                        <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2 "></div>{" "}
                         {employee.location}
                       </div>
                     </td>

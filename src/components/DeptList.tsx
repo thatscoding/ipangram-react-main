@@ -13,11 +13,12 @@ function DeptList() {
 
   useEffect(() => {
     const fetchCategory = async () => {
-      const res = await getAllDepartments(userInfo?.token);
-      setLoading(false);
+      const res: any = await getAllDepartments(userInfo?.token);
+
       if (res?.data.success) {
         console.log(res);
         setDepartments(res?.data.docs);
+        setLoading(false);
       }
     };
     fetchCategory();
@@ -26,6 +27,10 @@ function DeptList() {
   const handleDeleteDept = async (id: string) => {
     setLoading(true);
     const res = await deleteDept(id, userInfo?.token);
+    if (res.success === false) {
+      alert(res.error);
+      setLoading(false);
+    }
     console.log(res);
     if (res?.data.success) {
       const res = await getAllDepartments(userInfo?.token);

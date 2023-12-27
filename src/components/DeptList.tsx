@@ -1,49 +1,35 @@
 import { Link } from "react-router-dom";
 import { useUserInfo } from "../context/userContext";
-import { useEffect, useState } from "react";
 import { deleteDept, getAllDepartments } from "../services/department.api";
 import { HashLoader } from "react-spinners";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 function DeptList() {
-  const [departments, setDepartments] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
   const { userInfo } = useUserInfo();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchCategory = async () => {
-      const res: any = await getAllDepartments(userInfo?.token);
+  const { error, isLoading, data } = useQuery({
+    queryKey: ["alldepartments"],
+    queryFn: () => getAllDepartments(userInfo?.token),
+    staleTime: 10000,
+  });
+  console.log(error);
+  console.log("data", data);
 
-      if (res?.data.success) {
-        console.log(res);
-        setDepartments(res?.data.docs);
-        setLoading(false);
-      }
-    };
-    fetchCategory();
-  }, [userInfo]);
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteDept(id, userInfo?.token),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["alldepartments"] });
+    },
+  });
 
   const handleDeleteDept = async (id: string) => {
-    setLoading(true);
-    const res = await deleteDept(id, userInfo?.token);
-    if (res.success === false) {
-      alert(res.error);
-      setLoading(false);
-    }
-    console.log(res);
-    if (res?.data.success) {
-      const res = await getAllDepartments(userInfo?.token);
-      if (res?.data.success) {
-        console.log(res);
-        setDepartments(res?.data.docs);
-        setLoading(false);
-      }
-    } else {
-    }
+    deleteMutation.mutate(id);
+    console.log(true);
   };
 
-  if (loading) {
+  if (deleteMutation.isPending || isLoading) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <HashLoader color="#36d7b7" />
@@ -75,7 +61,7 @@ function DeptList() {
             </tr>
           </thead>
           <tbody>
-            {departments?.map((dept: any, index: number) => {
+            {data?.map((dept: any, index: number) => {
               return (
                 <>
                   <tr

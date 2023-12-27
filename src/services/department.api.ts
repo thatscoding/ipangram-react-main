@@ -16,16 +16,14 @@ export const addDepartment = async (data: any, token: string) => {
 };
 
 export const getAllDepartments = async (token: string) => {
-    try {
-        return await axios.get(`${API_URL}/departments/all`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-    } catch (error: any) {
-        return error?.response.data
-    }
+    const res = await axios.get(`${API_URL}/departments/all`, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    });
+    console.log(res)
+    return res?.data.docs;
 };
 
 export const deptById = async (id: string, token: string) => {

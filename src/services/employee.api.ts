@@ -4,16 +4,16 @@ const API_URL = "http://localhost:8000/v1";
 
 
 export const getAllEmployees = async (url: string, token: string) => {
-    try {
-        return await axios.get(`${API_URL}/employees/all/${url}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-    } catch (error) {
-        console.log(error);
-    }
+    const res = await axios.get(`${API_URL}/employees/all/${url}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    });
+    // console.log(res)
+
+    return res?.data.response;
+
 };
 
 export const employeeById = async (id: string, token: string) => {
@@ -31,16 +31,13 @@ export const employeeById = async (id: string, token: string) => {
 
 
 export const deleteEmployee = async (id: string, token: string) => {
-    try {
-        return await axios.delete(`${API_URL}/employees/${id}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-    } catch (error: any) {
-        return error?.response.data
-    }
+    const res = await axios.delete(`${API_URL}/employees/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    });
+    return res;
 };
 
 export const UpdateEmployee = async (data: any, id: string, token: string) => {

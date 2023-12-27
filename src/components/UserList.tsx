@@ -6,70 +6,73 @@ import { HashLoader } from "react-spinners";
 import Pagination from "./features/Pagination";
 import Sort from "./features/Sort";
 import Filter from "./features/Filter";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 
 function UserList() {
   // search
-  const [data, setData] = useState<any>({});
   const [sort, setSort] = useState({ sort: "rating", order: "desc" });
   const [location, setlocation] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  // search
-
-  const [employees, setEmployees] = useState([]);
-
-  const [loading, setLoading] = useState(true);
 
   const { userInfo } = useUserInfo();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchCategory = async () => {
-      // setLoading(true);
-      const url = `?page=${page}&sort=${
-        sort.order
-      }&location=${location.toString()}&search=${search}`;
-      console.log(url);
+  const url = `?page=${page}&sort=${
+    sort.order
+  }&location=${location.toString()}&search=${search}`;
+  console.log(url);
 
-      const res = await getAllEmployees(url, userInfo?.token);
-      console.log(res);
+  const { error, isLoading, data } = useQuery({
+    queryKey: ["allEmployees"],
+    queryFn: () => getAllEmployees(url, userInfo?.token),
+    staleTime: 10000,
+  });
 
-      setLoading(false);
-      if (res?.data.success) {
-        console.log(res);
-        setData(res?.data.response);
-        setEmployees(res?.data.response.user);
-      }
-    };
-    fetchCategory();
-  }, [userInfo, page, sort, location, search]);
+  console.log("employeData", data);
+  console.log("error", error);
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteEmployee(id, userInfo?.token),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["allEmployees"] });
+    },
+  });
 
   const handleDeleteEmployee = async (id: string) => {
-    setLoading(true);
-    const res = await deleteEmployee(id, userInfo?.token);
-    if (res.success === false) {
-      alert(res.error);
-      setLoading(false);
-      return;
-    }
-    if (res?.data.success) {
-      const res = await getAllEmployees("", userInfo?.token);
-      console.log(res);
-      if (res?.data.success) {
-        console.log(res);
-        setData(res?.data.response);
-        setEmployees(res?.data.response.user);
-        setLoading(false);
-      }
-    }
+    deleteMutation.mutate(id);
+    console.log(true);
   };
 
-  if (loading) {
+  if (deleteMutation.isPending || isLoading) {
     return (
       <div className="w-full h-screen flex justify-center items-center">
         <HashLoader color="#36d7b7" />
       </div>
     );
   }
+
+  // useEffect(() => {
+  //   const fetchCategory = async () => {
+  //     // setLoading(true);
+  //     const url = `?page=${page}&sort=${
+  //       sort.order
+  //     }&location=${location.toString()}&search=${search}`;
+  //     console.log(url);
+
+  //     const res = await getAllEmployees(url, userInfo?.token);
+  //     console.log(res);
+
+  //     setLoading(false);
+  //     if (res?.data.success) {
+  //       console.log(res);
+  //       setData(res?.data.response);
+  //       setEmployees(res?.data.response.user);
+  //     }
+  //   };
+  //   fetchCategory();
+  // }, [userInfo, page, sort, location, search]);
 
   return (
     <div className="px-2 sm:px-4 md:container mx-auto xl:max-w-6xl">
@@ -119,7 +122,7 @@ function UserList() {
           </div>
           <div className="flex flex-wrap gap-4 mx-4">
             <Filter
-              allLocation={data.locations ? data.locations : []}
+              allLocation={data?.locations ? data?.locations : []}
               setlocation={setlocation}
               location={location}
             />
@@ -146,7 +149,7 @@ function UserList() {
             </tr>
           </thead>
           <tbody>
-            {employees?.map((employee: any, index: number) => {
+            {data.users?.map((employee: any, index: number) => {
               return (
                 <>
                   <tr
